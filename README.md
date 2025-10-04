@@ -10,3 +10,7 @@
   </a>
 </div>
 
+
+### Usage
+
+``` python main.py <username> ```
