@@ -1,36 +1,40 @@
 import requests
-from colorama import Fore
+from colorama import Fore, init
 import os
+import ctypes
+import sys
 
-while True:
-    logo = '''
-    ███╗   ███╗ ██████╗███╗   ██╗ █████╗ ███╗   ███╗███████╗
-    ████╗ ████║██╔════╝████╗  ██║██╔══██╗████╗ ████║██╔════╝
-    ██╔████╔██║██║     ██╔██╗ ██║███████║██╔████╔██║█████╗  
-    ██║╚██╔╝██║██║     ██║╚██╗██║██╔══██║██║╚██╔╝██║██╔══╝  
-    ██║ ╚═╝ ██║╚██████╗██║ ╚████║██║  ██║██║ ╚═╝ ██║███████╗
-    ╚═╝     ╚═╝ ╚═════╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝
-
-                                                        '''
-    print(Fore.CYAN + logo)
-
-    
-    username = input(Fore.RESET+"$")
-    if not username.strip():
-        continue
-
+def check_username(username):
     url = f"https://api.mojang.com/users/profiles/minecraft/{username}"
     r = requests.get(url)
-
     if r.status_code == 200:
         try:
-            data = r.json()
-            print(f"{username} is taken")
+            r.json()
+            print(Fore.RED + f"\n[-] {username} is taken.")
         except Exception:
-            print("Error")
+            print(Fore.RED + "\n[!] Unknown Error.")
     elif r.status_code in (204, 404):
-        print(f"{username} is NOT taken")
+        print(Fore.GREEN + f"\n[+] {username} is NOT taken")
     else:
-        print(f"{r.status_code}")
+        print(Fore.RED + f"\n[!] HTTP Error {r.status_code}")
 
-    os.system("pause")
+logo = f"""{Fore.LIGHTRED_EX}
+███╗   ███╗ ██████╗███╗   ██╗ █████╗ ███╗   ███╗███████╗
+████╗ ████║██╔════╝████╗  ██║██╔══██╗████╗ ████║██╔════╝
+██╔████╔██║██║     ██╔██╗ ██║███████║██╔████╔██║█████╗  
+██║╚██╔╝██║██║     ██║╚██╗██║██╔══██║██║╚██╔╝██║██╔══╝  
+██║ ╚═╝ ██║╚██████╗██║ ╚████║██║  ██║██║ ╚═╝ ██║███████╗
+╚═╝     ╚═╝ ╚═════╝╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝
+"""
+
+print(logo)
+
+if len(sys.argv) < 2:
+    print(Fore.RED + "This script must be run from the command line.\n")
+    print(Fore.YELLOW + "python main.py <username>")
+    input("")
+    sys.exit()
+
+username = sys.argv[1]
+check_username(username)
+input("\n")
